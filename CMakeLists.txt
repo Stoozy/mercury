@@ -5,4 +5,4 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 project(mercury VERSION 1.0)
 include_directories(include)
-add_executable(mercury src/main.cc)
+add_executable(mercury src/main.cc src/util.cc src/config.cc)

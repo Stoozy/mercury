@@ -1,0 +1,21 @@
+{
+  "historical_data": ["AAPL.csv", "TSLA.csv"],
+  "strategy": {
+    "name": "mean-reversion",
+    "moving-average": "SMA"
+  },
+  "positions": {
+    "AAPL": {
+      "volume": 120,
+      "price": 177.49
+    },
+    "TSLA": {
+      "volume": 80,
+      "price": 260
+    }
+  },
+  "slippage": 0.005,
+  "transaction_cost": 0.001,
+  "start_date": "2022-08-01",
+  "end_date": "2023-10-07"
+}
