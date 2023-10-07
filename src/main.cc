@@ -4,7 +4,8 @@
 #include <string.h>
 #include <string>
 
-#include <cfg.h>
+#include <backtest.h>
+#include <config.h>
 #include <util.h>
 
 using namespace std;
@@ -22,33 +23,42 @@ int main(int argc, char *argv[]) {
       if (argc < 3) {
         cout << USAGE << endl;
         return 0;
-      } else {
-        LOG_INFO("Config file at " << argv[2]);
+      }
 
-        string path = char_ptr_to_string(argv[2]);
-        Config conf(path);
+      LOG_INFO("Config file at " << argv[2]);
 
-        if (!conf.exists()) {
-          LOG_CRITICAL(argv[2] << " does not exist.");
-          return -1;
-        } else {
-          // load config
-          if (!conf.load()) {
-            LOG_CRITICAL("Invalid config file. Please make sure it's properly "
-                         "formatted and contains all the data needed.");
-            return -1;
-          }
-        }
+      string path = char_ptr_to_string(argv[2]);
+      Config conf(path);
+
+      if (!conf.exists()) {
+        LOG_CRITICAL(argv[2] << " does not exist.");
+        return -1;
+      }
+
+      // load config
+      if (!conf.load()) {
+        LOG_CRITICAL("Invalid config file. Please make sure it's properly "
+                     "formatted and contains all the data needed.");
+        return -1;
+      }
+
+      json config_data = conf.getJson();
+      Backtest bt(config_data);
+
+      bt.run();
+
+      vector<PNL> results = bt.getResults();
+      for (int i = 0; i < results.size(); i++) {
+        LOG_INFO("DAY " << i << " PROFIT: $" << results[i].profit << " LOSS: $"
+                        << results[i].loss);
       }
     }
 
-    if (strcmp(argv[1], "-h") == 0) {
+    if (strcmp(argv[1], "-h") == 0)
       cout << USAGE << endl;
-    }
 
-    if (strcmp(argv[1], "-v") == 0) {
+    if (strcmp(argv[1], "-v") == 0)
       cout << VERSION << endl;
-    }
   }
 
   return 0;

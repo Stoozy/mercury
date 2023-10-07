@@ -1,5 +1,5 @@
-#include <cfg.h>
 #include <clue.h>
+#include <config.h>
 #include <fstream>
 #include <nlohmann/json.hpp>
 
@@ -14,21 +14,23 @@ bool Config::exists() {
 }
 
 bool Config::load() {
-  json data;
   try {
-    data = json::parse(m_file);
+    m_data = json::parse(m_file);
+
   } catch (json::parse_error err) {
     return false;
   }
 
-  if (!data.contains("historical_data") || !data.contains("strategy") ||
-      !data.contains("positions") || !data.contains("start_date") ||
-      !data.contains("end_date")) {
+  if (!m_data.contains("historical_data") || !m_data.contains("strategy") ||
+      !m_data.contains("positions") || !m_data.contains("start_date") ||
+      !m_data.contains("end_date")) {
     return false;
   }
 
-  for (string path : data["historical_data"])
+  for (string path : m_data["historical_data"])
     LOG_INFO("Using " << path << " for historical data");
 
   return true;
 }
+
+json Config::getJson() { return m_data; }
