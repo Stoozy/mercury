@@ -18,15 +18,15 @@ typedef struct asset {
 
 typedef enum OrderType { BUY, SELL } OrderType;
 
-class Strategy {
-
+class Strategy : public EventListener {
 private:
   vector<Event> signals;
   vector<Asset> portfolio;
   const json &m_config;
 
 public:
-  Strategy(const json &config) : m_config(config) {}
+  Strategy(const json &config)
+      : m_config(config), EventListener("MEAN_REVERSION") {}
   ~Strategy() {}
 
   virtual void calculateSignals() = 0;
@@ -35,5 +35,6 @@ public:
 
   virtual void onEvent(const Event &event) { signals.push_back(event); }
 };
+
 
 #endif

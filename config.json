@@ -1,7 +1,7 @@
 {
   "historical_data": ["AAPL.csv", "TSLA.csv"],
   "strategy": {
-    "name": "mean-reversion",
+    "name": "MEAN_REVERSION",
     "moving-average": "SMA"
   },
   "positions": {

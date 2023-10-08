@@ -6,17 +6,18 @@
 
 using std::vector;
 
-class DataHandler : public EventDispatcher {
-private:
-  vector<Event> m_events;
-
+class DataHandler : EventDispatcher {
 public:
   DataHandler();
   ~DataHandler();
 
-  virtual void addListener(shared_ptr<EventListener> listener) = 0;
-  virtual void removeListener(shared_ptr<EventListener> listener) = 0;
-  virtual void dispatch(const Event &event) = 0;
+  // @brief Listens to alternate thread (market simulation)
+  // and dispatches new events to listeners
+  void run();
+
+  void addListener(shared_ptr<EventListener> listener);
+  void removeListener(shared_ptr<EventListener> listener);
+  void dispatch(const Event &event);
 };
 
 #endif

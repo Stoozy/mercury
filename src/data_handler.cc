@@ -2,6 +2,7 @@
 #include <clue.h>
 #include <data_handler.h>
 #include <memory>
+#include <unistd.h>
 
 using std::find_if;
 using std::make_unique;
@@ -23,6 +24,26 @@ void DataHandler::removeListener(shared_ptr<EventListener> listener) {
   } else {
     LOG_ALERT("Could not find " << (*listener).m_name
                                 << " in list of listeners.");
+  }
+}
+
+void DataHandler::run() {
+  // TODO: listen to market events
+
+  for (;;) {
+    if (event_queue.size() > 0) {
+      auto event = event_queue.pop();
+
+      if (event.type == QUIT_EVENT)
+        return;
+
+      LOG_INFO("[DataHandler] Dispatching " << event.toString()
+                                            << " to listeners.");
+      dispatch(event);
+    }
+
+    LOG_INFO("Listening for market events...");
+    sleep(1);
   }
 }
 

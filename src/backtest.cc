@@ -1,10 +1,35 @@
+#include <thread>
+
 #include <backtest.h>
+#include <clue.h>
+#include <data_handler.h>
+#include <market.h>
+#include <mean_reversion.h>
 
 vector<PNL> Backtest::getResults() { return m_results; }
 
 void Backtest::run() {
-  // DUMMY DATA
-  m_results.push_back(PNL{10.13, 4.17});
-  m_results.push_back(PNL{15.25, 11.78});
-  m_results.push_back(PNL{12.85, 8.23});
+  DataHandler data_handler;
+
+  json strategy_config = m_config["strategy"];
+  LOG_INFO("Got strategy config " << strategy_config);
+
+  for (auto strategy : m_strategies) {
+    if (strategy.get()->m_name == strategy_config["name"]) {
+      LOG_INFO("Found " << strategy_config["name"] << " strategy.");
+      data_handler.addListener(strategy);
+    }
+  }
+
+  std::thread market_thread = std::thread(market_sim_main);
+  market_thread.detach();
+
+  data_handler.run();
 }
+
+Backtest::Backtest(json &config) : m_config(config) {
+  json strategy_config = m_config["strategy"];
+
+  // add new strategies here
+  m_strategies.push_back(std::make_shared<MeanReversion>(strategy_config));
+};

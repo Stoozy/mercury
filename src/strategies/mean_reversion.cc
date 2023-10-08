@@ -26,4 +26,7 @@ void MeanReversion::calculateSignals() {
 void MeanReversion::executeSignals() {}
 void MeanReversion::updatePortfolio() {}
 
-void MeanReversion::onEvent(const Event &event) {}
+void MeanReversion::onEvent(const Event &event) {
+  auto x = event.toString();
+  LOG_INFO("[MEAN_REVERSION] Recieved event " << x);
+}
