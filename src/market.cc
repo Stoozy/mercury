@@ -2,11 +2,16 @@
 #include <market.h>
 #include <unistd.h>
 
-void market_sim_main() {
-  LOG_INFO("Started market simulation.");
+MarketSimulation::MarketSimulation(const json &config) : m_config(config) {}
+MarketSimulation::~MarketSimulation() {}
+
+void MarketSimulation::run() {
+  LOG_INFO("[MARKET_SIMULATION] Started market simulation.");
 
   for (;;) {
-    event_queue.push(Event("MARKET_EVENT"));
+    Event event("MARKET_EVENT");
+    event_queue.push(event);
     sleep(2);
+    LOG_INFO("[MarketSim] Fired event " << event.toString());
   }
 }

@@ -42,7 +42,7 @@ void DataHandler::run() {
       dispatch(event);
     }
 
-    LOG_INFO("Listening for market events...");
+    LOG_INFO("[DataHandler] Listening for market events...");
     sleep(1);
   }
 }

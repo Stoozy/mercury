@@ -25,8 +25,7 @@ private:
   const json &m_config;
 
 public:
-  Strategy(const json &config)
-      : m_config(config), EventListener("MEAN_REVERSION") {}
+  Strategy(const json &config) : m_config(config), EventListener("") {}
   ~Strategy() {}
 
   virtual void calculateSignals() = 0;
@@ -35,6 +34,5 @@ public:
 
   virtual void onEvent(const Event &event) { signals.push_back(event); }
 };
-
 
 #endif
