@@ -21,10 +21,7 @@ void Backtest::run() {
     }
   }
 
-  MarketSimulation ms(m_config);
-
-  std::thread market_thread = std::thread(&MarketSimulation::run, ms);
-  market_thread.detach();
+  std::thread(&MarketSimulation::run, MarketSimulation(m_config)).detach();
 
   data_handler.run();
 }

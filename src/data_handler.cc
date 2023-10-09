@@ -34,21 +34,24 @@ void DataHandler::run() {
     if (event_queue.size() > 0) {
       auto event = event_queue.pop();
 
-      if (event.type == QUIT_EVENT)
-        return;
+      if (event->type == QUIT_EVENT) {
 
-      LOG_INFO("[DataHandler] Dispatching " << event.toString()
+        LOG_INFO("[DataHandler] Received QUIT_EVENT. Quitting backtest.");
+        return;
+      }
+
+      LOG_INFO("[DataHandler] Dispatching " << event->toString()
                                             << " to listeners.");
       dispatch(event);
     }
 
-    LOG_INFO("[DataHandler] Listening for market events...");
-    sleep(1);
+    sleep(0.5);
   }
 }
 
-void DataHandler::dispatch(const Event &event) {
+void DataHandler::dispatch(const Event *event) {
   // dispatch to every listener
+
   for (shared_ptr<EventListener> listener : m_listeners) {
     listener.get()->onEvent(event);
   }

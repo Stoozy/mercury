@@ -17,7 +17,7 @@ public:
 
   void addListener(shared_ptr<EventListener> listener);
   void removeListener(shared_ptr<EventListener> listener);
-  void dispatch(const Event &event);
+  void dispatch(const Event *event);
 };
 
 #endif
