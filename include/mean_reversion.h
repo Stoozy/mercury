@@ -22,7 +22,7 @@ public:
   virtual void executeSignals();
   virtual void updatePortfolio();
 
-  virtual void onEvent(const Event *event);
+  virtual void onEvent(const EventVariant event);
 };
 
 #endif

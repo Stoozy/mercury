@@ -4,6 +4,7 @@
 #include <queue>
 #include <sstream>
 #include <string>
+#include <variant>
 #include <vector>
 
 #ifndef EVENT_H
@@ -16,20 +17,25 @@ using std::to_string;
 using std::vector;
 class EventListener;
 
-typedef enum event_type {
-  MARKET_EVENT,
-  SIGNAL_EVENT,
-  ORDER_EVENT,
-  EXECUTION_EVENT,
-  QUIT_EVENT
-} EventType;
+#define MARKET_EVENT 0
+#define QUIT_EVENT 1
+#define SIGNAL_EVENT 2
+#define ORDER_EVENT 3
+#define EXECUTION_EVENT 4
+
+class MarketEvent;
+class SignalEvent;
+class OrderEvent;
+class ExecutionEvent;
+class QuitEvent;
+
+using EventVariant = std::variant<MarketEvent, QuitEvent>;
 
 class Event {
 public:
   string m_name;
-  EventType type;
 
-  Event(EventType t, string name) : type(t), m_name(name) {}
+  Event(string name) : m_name(name) {}
 
   virtual ~Event() {}
   virtual string toString() { return m_name; }
@@ -44,7 +50,7 @@ public:
 
   virtual void addListener(shared_ptr<EventListener> listener) = 0;
   virtual void removeListener(shared_ptr<EventListener> listener) = 0;
-  virtual void dispatch(const Event *event) = 0;
+  virtual void dispatch(const EventVariant event) = 0;
 };
 
 class EventListener {
@@ -52,28 +58,26 @@ public:
   string m_name;
   EventListener(string name) { m_name = name; }
   ~EventListener() {}
-  virtual void onEvent(const Event *event) = 0;
+  virtual void onEvent(const EventVariant event) = 0;
 };
 
 class EventQueue {
 private:
-  std::queue<Event *> m_queue;
+  std::queue<EventVariant> m_queue;
   std::mutex m_mutex;
 
 public:
   EventQueue();
   ~EventQueue();
 
-  void push(Event *event);
+  void push(EventVariant &event);
   const size_t size();
-  const Event *pop();
+  const EventVariant pop();
 };
-
-extern EventQueue event_queue;
 
 class QuitEvent : public Event {
 public:
-  QuitEvent() : Event(QUIT_EVENT, "QUIT_EVENT") {}
+  QuitEvent() : Event("QUIT_EVENT") {}
 };
 
 class MarketEvent : public Event {
@@ -86,7 +90,7 @@ private:
 public:
   MarketEvent(float open, float high, float low, float vol)
       : m_open(open), m_high(high), m_low(low), m_volume(vol),
-        Event(MARKET_EVENT, "MARKET_EVENT") {}
+        Event("MARKET_EVENT") {}
 
   string toString() {
     std::stringstream stream;
@@ -106,5 +110,7 @@ public:
     return stream.str();
   }
 };
+
+extern EventQueue event_queue;
 
 #endif

@@ -20,8 +20,7 @@ typedef enum OrderType { BUY, SELL } OrderType;
 
 class Strategy : public EventListener {
 private:
-  vector<Event> signals;
-  vector<Asset> portfolio;
+  vector<Asset> m_portfolio;
   const json &m_config;
 
 public:
@@ -32,7 +31,7 @@ public:
   virtual void executeSignals() = 0;
   virtual void updatePortfolio() = 0;
 
-  virtual void onEvent(const Event &event) { signals.push_back(event); }
+  virtual void onEvent(const EventVariant event) = 0;
 };
 
 #endif

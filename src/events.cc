@@ -11,13 +11,13 @@ const size_t EventQueue::size() {
   return size;
 }
 
-void EventQueue::push(Event *event) {
+void EventQueue::push(EventVariant &event) {
   m_mutex.lock();
   m_queue.push(event);
   m_mutex.unlock();
 }
 
-const Event *EventQueue::pop() {
+const EventVariant EventQueue::pop() {
   m_mutex.lock();
   auto first = m_queue.front();
   m_queue.pop();

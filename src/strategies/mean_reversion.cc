@@ -28,12 +28,12 @@ void MeanReversion::calculateSignals() {
 void MeanReversion::executeSignals() {}
 void MeanReversion::updatePortfolio() {}
 
-void MeanReversion::onEvent(const Event *event) {
+void MeanReversion::onEvent(const EventVariant variant) {
   string data;
-  switch (event->type) {
+  switch (variant.index()) {
   case MARKET_EVENT: {
-    const MarketEvent *me = (MarketEvent *)(event);
-    LOG_INFO("[MEAN_REVERSION] Recieved event " << me->toString());
+    LOG_INFO("[MEAN_REVERSION] Recieved event "
+             << std::get<MarketEvent>(variant).toString());
     break;
   }
   default:

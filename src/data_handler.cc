@@ -32,24 +32,22 @@ void DataHandler::run() {
 
   for (;;) {
     if (event_queue.size() > 0) {
-      auto event = event_queue.pop();
+      EventVariant variant = event_queue.pop();
 
-      if (event->type == QUIT_EVENT) {
+      if (variant.index() == QUIT_EVENT) {
 
         LOG_INFO("[DataHandler] Received QUIT_EVENT. Quitting backtest.");
         return;
       }
 
-      LOG_INFO("[DataHandler] Dispatching " << event->toString()
-                                            << " to listeners.");
-      dispatch(event);
+      dispatch(variant);
     }
 
     sleep(0.5);
   }
 }
 
-void DataHandler::dispatch(const Event *event) {
+void DataHandler::dispatch(const EventVariant event) {
   // dispatch to every listener
 
   for (shared_ptr<EventListener> listener : m_listeners) {

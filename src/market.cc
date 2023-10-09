@@ -9,12 +9,14 @@ void MarketSimulation::run() {
   LOG_INFO("[MarketSimulator] Started market simulation.");
 
   for (int i = 0; i < 10; i++) {
-    MarketEvent event(10.5, 20.25, 17, 1000);
-    event_queue.push(&event);
+    MarketEvent me(10.5, 20.25, 17, 1000);
+    EventVariant variant = me;
+    event_queue.push(variant);
     sleep(1);
-    LOG_INFO("[MarketSimulator] Fired event " << event.toString());
+    LOG_INFO("[MarketSimulator] Fired event " << me.toString());
   }
 
   QuitEvent qe;
-  event_queue.push(&qe);
+  EventVariant variant = qe;
+  event_queue.push(variant);
 }
