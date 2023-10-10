@@ -32,7 +32,7 @@ void MeanReversion::onEvent(const EventVariant variant) {
   string data;
   switch (variant.index()) {
   case MARKET_EVENT: {
-    LOG_INFO("[MEAN_REVERSION] Recieved event "
+    LOG_INFO("[MeanReversion] Recieved event "
              << std::get<MarketEvent>(variant).toString());
     break;
   }
