@@ -17,7 +17,7 @@ bool Config::load() {
   try {
     m_data = json::parse(m_file);
 
-  } catch (json::parse_error err) {
+  } catch (json::parse_error &err) {
     return false;
   }
 

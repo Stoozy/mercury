@@ -1,21 +1,28 @@
 {
-  "historical_data": "AAPL.csv",
+  "historical_data": "TSLA.csv",
   "strategy": {
     "name": "MEAN_REVERSION",
-    "moving-average": "SMA"
-  },
-  "positions": {
-    "AAPL": {
-      "volume": 120,
-      "price": 177.49
-    },
-    "TSLA": {
-      "volume": 80,
-      "price": 260
+    "moving_average": "SMA",
+    "days": {
+      "short_term": 10,
+      "long_term": 100
     }
   },
+  "capital": 10000,
+  "positions": [
+    {
+      "symbol": "AAPL",
+      "quantity": 120,
+      "price": 142.54
+    },
+    {
+      "symbol": "TSLA",
+      "quantity": 80,
+      "price": 260
+    }
+  ],
   "slippage": 0.005,
   "transaction_cost": 0.001,
   "start_date": "2022-08-01",
-  "end_date": "2023-07-10"
+  "end_date": "2023-10-07"
 }

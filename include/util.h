@@ -20,6 +20,4 @@ std::string char_ptr_to_string(char *str);
 
 std::chrono::system_clock::time_point parse_date(const std::string &dateString);
 
-int add(int x, int y);
-
 #endif

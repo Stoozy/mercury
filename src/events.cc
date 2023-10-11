@@ -3,7 +3,7 @@
 EventQueue::EventQueue() {}
 EventQueue::~EventQueue() {}
 
-const size_t EventQueue::size() {
+size_t EventQueue::size() {
   m_mutex.lock();
   size_t size = m_queue.size();
   m_mutex.unlock();

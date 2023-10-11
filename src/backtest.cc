@@ -27,8 +27,8 @@ void Backtest::run() {
 }
 
 Backtest::Backtest(json &config) : m_config(config) {
-  json strategy_config = m_config["strategy"];
+  // json strategy_config = m_config["strategy"];
 
   // add new strategies here
-  m_strategies.push_back(std::make_shared<MeanReversion>(strategy_config));
+  m_strategies.push_back(std::make_shared<MeanReversion>(config));
 };

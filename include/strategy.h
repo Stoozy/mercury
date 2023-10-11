@@ -9,27 +9,23 @@
 
 using json = nlohmann::json;
 using std::string;
+using std::tuple;
 using std::vector;
 
-typedef struct asset {
-  string symbol;
-  float price;
-} Asset;
-
-typedef enum OrderType { BUY, SELL } OrderType;
-
 class Strategy : public EventListener {
-private:
-  vector<Asset> m_portfolio;
+protected:
+  vector<tuple<Security, int>> m_portfolio;
   const json &m_config;
 
 public:
-  Strategy(const json &config) : m_config(config), EventListener("") {}
+  Strategy(const json &config) : EventListener(""), m_config(config) {}
   ~Strategy() {}
 
-  virtual void calculateSignals() = 0;
-  virtual void executeSignals() = 0;
-  virtual void updatePortfolio() = 0;
+  virtual void calculateSignal(const MarketEvent) = 0;
+  virtual void executeSignal(const SignalEvent) = 0;
+
+  virtual void updatePortfolio(const MarketEvent) = 0;
+  virtual void updatePortfolio(const OrderEvent) = 0;
 
   virtual void onEvent(const EventVariant event) = 0;
 };

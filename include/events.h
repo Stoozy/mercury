@@ -7,6 +7,7 @@
 #include <variant>
 #include <vector>
 
+#include <types.h>
 #ifndef EVENT_H
 #define EVENT_H
 
@@ -17,24 +18,26 @@ using std::to_string;
 using std::vector;
 class EventListener;
 
-#define MARKET_EVENT 0
-#define QUIT_EVENT 1
+#define QUIT_EVENT 0
+#define MARKET_EVENT 1
 #define SIGNAL_EVENT 2
 #define ORDER_EVENT 3
-#define EXECUTION_EVENT 4
 
 class MarketEvent;
 class SignalEvent;
 class OrderEvent;
-class ExecutionEvent;
 class QuitEvent;
 
-using EventVariant = std::variant<MarketEvent, QuitEvent>;
+using EventVariant =
+    std::variant<QuitEvent, MarketEvent, SignalEvent, OrderEvent>;
 
 class Event {
-public:
+protected:
   string m_name;
 
+  // TODO: keep timestamp here
+
+public:
   Event(string name) : m_name(name) {}
 
   virtual ~Event() {}
@@ -71,7 +74,7 @@ public:
   ~EventQueue();
 
   void push(EventVariant &event);
-  const size_t size();
+  size_t size();
   const EventVariant pop();
 };
 
@@ -88,15 +91,19 @@ private:
   float m_volume;
 
 public:
-  MarketEvent(float open, float high, float low, float vol)
-      : m_open(open), m_high(high), m_low(low), m_volume(vol),
-        Event("MARKET_EVENT") {}
+  string m_symbol;
+
+  MarketEvent(string symbol, float open, float high, float low, float vol)
+      : Event("MARKET_EVENT"), m_open(open), m_high(high), m_low(low),
+        m_volume(vol), m_symbol(symbol) {}
+
+  float getDayAverage() const { return (m_low + m_high) / 2; }
 
   string toString() {
     std::stringstream stream;
-    stream << " MarketEvent { open: " << std::fixed << std::setprecision(2)
+    stream << " MarketEvent {open: " << std::fixed << std::setprecision(2)
            << m_open << " high: " << m_high << " low: " << m_low
-           << " volume: " << m_volume << " }";
+           << " volume: " << m_volume << "}";
 
     return stream.str();
   }
@@ -110,6 +117,51 @@ public:
     return stream.str();
   }
 };
+
+typedef enum { BUY, SELL, HOLD } SignalEventType;
+class SignalEvent : public Event {
+
+public:
+  SignalEventType m_type;
+  Security m_security;
+
+  SignalEvent(SignalEventType type, Security sec)
+      : Event("SIGNAL_EVENT"), m_type(type), m_security(sec) {}
+  ~SignalEvent() {}
+
+  string toString() {
+    switch (m_type) {
+    case BUY: {
+      return "BUY " + m_security.symbol;
+    }
+    case SELL: {
+      return "SELL " + m_security.symbol;
+    }
+    case HOLD: {
+      return "HOLD  " + m_security.symbol;
+    }
+    }
+
+    return "HOLD  " + m_security.symbol;
+  }
+
+  string toString() const {
+    switch (m_type) {
+    case BUY: {
+      return "BUY " + m_security.symbol;
+    }
+    case SELL: {
+      return "SELL " + m_security.symbol;
+    }
+    case HOLD: {
+      return "HOLD  " + m_security.symbol;
+    }
+    }
+
+    return "HOLD  " + m_security.symbol;
+  }
+};
+class OrderEvent : public Event {};
 
 extern EventQueue event_queue;
 

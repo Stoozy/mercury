@@ -47,11 +47,12 @@ int main(int argc, char *argv[]) {
 
       bt.run();
 
-      vector<PNL> results = bt.getResults();
-      for (int i = 0; i < results.size(); i++) {
-        LOG_INFO("DAY " << i << " PROFIT: $" << results[i].profit << " LOSS: $"
-                        << results[i].loss);
-      }
+      // vector<PNL> results = bt.getResults();
+      // for (int i = 0; i < results.size(); i++) {
+      //   LOG_INFO("DAY " << i << " PROFIT: $" << results[i].profit << " LOSS:
+      //   $"
+      //                   << results[i].loss);
+      // }
     }
 
     if (strcmp(argv[1], "-h") == 0)

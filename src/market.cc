@@ -22,23 +22,25 @@ void MarketSimulation::run() {
       std::chrono::duration_cast<std::chrono::duration<int>>(duration).count() /
       (60 * 60 * 24);
 
-  LOG_INFO("Days " << days);
+  LOG_INFO("Simulating " << days << " days worth of data.");
 
-  // string data = m_config["historical_data"];
-  // LOG_INFO("Historical data at " << data);
+  string file = m_config["historical_data"];
+  string symbol = file.substr(0, file.find(".")); // get symbol from file name
 
-  io::CSVReader<4> in(m_config["historical_data"]);
-  in.read_header(io::ignore_extra_column, "Date", "Open", "High", "Low");
-  std::string Date;
-  float Open;
-  float High;
-  float Low;
-  while (in.read_row(Date, Open, High, Low)) {
-    // do stuff with the data
-    auto cur = parse_date(Date);
+  io::CSVReader<5> in(file);
+  in.read_header(io::ignore_extra_column, "Date", "Open", "High", "Low",
+                 "Volume");
+  std::string date;
+  float open;
+  float high;
+  float low;
+  float volume;
+  while (in.read_row(date, open, high, low, volume)) {
+    auto cur = parse_date(date);
     if (start <= cur && cur <= end) {
-
-      LOG_INFO(" Date: " << Date << " Open: " << Open);
+      MarketEvent me(symbol, open, high, low, volume);
+      EventVariant variant = me;
+      event_queue.push(variant);
     }
   }
 
