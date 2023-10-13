@@ -13,7 +13,8 @@ private:
   unsigned long long m_short_term;
   unsigned long long m_long_term;
   unsigned long long m_cur_day;
-  float m_capital;
+  float m_slippage;
+  float m_transaction_cost;
 
 public:
   MeanReversion(const json &config);

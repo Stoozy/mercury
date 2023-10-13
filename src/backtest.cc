@@ -24,6 +24,29 @@ void Backtest::run() {
   std::thread(&MarketSimulation::run, MarketSimulation(m_config)).detach();
 
   data_handler.run();
+
+  for (auto strategy : m_strategies) {
+    auto tuples = strategy->getTransactions();
+
+    std::cout << strategy->m_name << " Performance:" << std::endl;
+
+    for (auto tuple : tuples) {
+      OrderEvent order = std::get<0>(tuple);
+      int day = std::get<1>(tuple);
+
+      std::cout << "\tDay: " << day << "; Order: " << order.toString()
+                << std::endl;
+    }
+
+    float initial_balance = strategy->m_initial_total;
+    float current_balance = strategy->getTotalBalance();
+
+    std::cout << "\tInitial value on all assets: $" << std::fixed
+              << std::setprecision(2) << initial_balance << std::endl;
+
+    std::cout << "\tFinal value on all assets: $" << std::fixed
+              << std::setprecision(2) << current_balance << std::endl;
+  }
 }
 
 Backtest::Backtest(json &config) : m_config(config) {

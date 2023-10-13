@@ -9,4 +9,6 @@ typedef struct security {
   float price;
 } Security;
 
+typedef enum { BUY, SELL, HOLD } OrderType;
+
 #endif

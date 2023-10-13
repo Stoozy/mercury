@@ -1,3 +1,4 @@
+#include <ctime>
 #include <iomanip>
 #include <memory>
 #include <mutex>
@@ -118,14 +119,13 @@ public:
   }
 };
 
-typedef enum { BUY, SELL, HOLD } SignalEventType;
 class SignalEvent : public Event {
 
 public:
-  SignalEventType m_type;
+  OrderType m_type;
   Security m_security;
 
-  SignalEvent(SignalEventType type, Security sec)
+  SignalEvent(OrderType type, Security sec)
       : Event("SIGNAL_EVENT"), m_type(type), m_security(sec) {}
   ~SignalEvent() {}
 
@@ -161,7 +161,58 @@ public:
     return "HOLD  " + m_security.symbol;
   }
 };
-class OrderEvent : public Event {};
+
+class OrderEvent : public Event {
+public:
+  Security m_security;
+  unsigned long long m_quantity;
+  OrderType m_order_type;
+
+  OrderEvent(Security sec, unsigned long quantity, OrderType type)
+      : Event("ORDER_EVENT"), m_security(sec), m_quantity(quantity),
+        m_order_type(type) {}
+  ~OrderEvent() {}
+
+  string toString() {
+
+    std::stringstream ret;
+    switch (m_order_type) {
+    case BUY:
+      ret << "BUY";
+      break;
+    case SELL:
+      ret << "SELL";
+      break;
+    case HOLD:
+      ret << "HOLD";
+      break;
+    }
+
+    ret << " " << m_quantity << " " << m_security.symbol << " @ "
+        << "$" << std::fixed << std::setprecision(2) << m_security.price;
+    return ret.str();
+  }
+
+  string toString() const {
+
+    std::stringstream ret;
+    switch (m_order_type) {
+    case BUY:
+      ret << "BUY";
+      break;
+    case SELL:
+      ret << "SELL";
+      break;
+    case HOLD:
+      ret << "HOLD";
+      break;
+    }
+
+    ret << " " << m_quantity << " " << m_security.symbol << " @ "
+        << "$" << std::fixed << std::setprecision(2) << m_security.price;
+    return ret.str();
+  }
+};
 
 extern EventQueue event_queue;
 

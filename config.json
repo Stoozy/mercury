@@ -5,24 +5,25 @@
     "moving_average": "SMA",
     "days": {
       "short_term": 10,
-      "long_term": 100
+      "long_term": 50
     }
   },
   "capital": 10000,
   "positions": [
     {
-      "symbol": "AAPL",
-      "quantity": 120,
-      "price": 142.54
+      "symbol": "TSLA",
+      "quantity": 0,
+      "price": 115.79
     },
     {
-      "symbol": "TSLA",
+      "symbol": "AAPL",
       "quantity": 80,
       "price": 260
     }
   ],
+  "output": "output.csv",
   "slippage": 0.005,
   "transaction_cost": 0.001,
-  "start_date": "2022-08-01",
-  "end_date": "2023-10-07"
+  "start_date": "2018-10-11",
+  "end_date": "2023-10-11"
 }
