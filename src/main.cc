@@ -46,7 +46,20 @@ int main(int argc, char *argv[]) {
 
       // create and run the actual backtest
       Backtest bt(config_data);
+
+#ifdef PROFILE
+      auto start = std::chrono::high_resolution_clock::now();
+#endif
+
       bt.run();
+
+#ifdef PROFILE
+      auto end = std::chrono::high_resolution_clock::now();
+
+      auto duration = end - start;
+      auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(duration);
+      LOG_INFO("Backtest took " << ms.count() << " ms.");
+#endif
     }
 
     if (strcmp(argv[1], "-h") == 0)

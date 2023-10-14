@@ -7,6 +7,8 @@
 #include <iomanip>
 #include <iostream>
 
+#define PROFILE
+
 #define VERSION "Mercury v1"
 #define USAGE                                                                  \
   "Proper Usage:\n\

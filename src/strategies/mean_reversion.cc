@@ -241,7 +241,6 @@ void MeanReversion::executeSignal(const SignalEvent event) {
 }
 
 void MeanReversion::updatePortfolio(const MarketEvent event) {
-  LOG_INFO("[MeanReversion] Updating portfolio " << event.toString());
   auto it = std::find_if(m_portfolio.begin(), m_portfolio.end(),
                          [&event](tuple<Security, int> tup) {
                            return std::get<0>(tup).symbol == event.m_symbol;
@@ -296,8 +295,8 @@ void MeanReversion::onEvent(const EventVariant variant) {
   switch (variant.index()) {
   case MARKET_EVENT: {
     m_cur_day++;
-    LOG_INFO("[MeanReversion] Day "
-             << m_cur_day << " " << std::get<MarketEvent>(variant).toString());
+    // LOG_INFO("[MeanReversion] Day "
+    //        < m_cur_day << " " << std::get<MarketEvent>(variant).toString());
 
     updatePortfolio(std::get<MarketEvent>(variant));
     calculateSignal(std::get<MarketEvent>(variant));

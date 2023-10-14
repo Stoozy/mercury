@@ -44,7 +44,8 @@ void Backtest::run() {
               << std::setprecision(2) << initial_balance << std::endl;
 
     std::cout << "\tFinal value on all assets: $" << std::fixed
-              << std::setprecision(2) << current_balance << std::endl;
+              << std::setprecision(2) << current_balance << std::endl
+              << std::endl;
   }
 }
 
