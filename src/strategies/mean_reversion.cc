@@ -12,7 +12,7 @@ MeanReversion::MeanReversion(const json &config)
   m_slippage = config["slippage"];
   m_transaction_cost = config["transaction_cost"];
 
-  string out_path = config["output"];
+  string out_path = config["strategy"]["output"];
   m_output_file = std::ofstream(out_path);
 
   m_output_file << "Day,LTA,STA,Price" << std::endl;
@@ -26,13 +26,17 @@ MeanReversion::MeanReversion(const json &config)
   string ma = m_config["strategy"]["moving_average"];
   if (ma == "SMA") {
     m_type = SMA;
-  } else if (ma == "WMA") {
-    m_type = WMA;
   } else if (ma == "EMA") {
     m_type = EMA;
+    if (!m_config["strategy"].contains("smoothing")) {
+      LOG_CRITICAL("Missing smoothing parameter for strategy.");
+      exit(-1);
+    } else {
+      m_smoothing = m_config["strategy"]["smoothing"];
+    }
   } else {
-    LOG_CRITICAL("Invalid mean reversion moving_average (should either be SMA, "
-                 "EMA, or WMA)");
+    LOG_CRITICAL(
+        "Invalid mean reversion moving_average (should either be SMA or EMA)");
     exit(-1);
   }
 
@@ -78,11 +82,11 @@ SignalEvent MeanReversion::calculateSMA(const MarketEvent event) {
 
   float new_ltp_avg =
       std::accumulate(long_term_prices.begin(), long_term_prices.end(), 0) /
-      m_long_term;
+      long_term_prices.size();
 
   float new_stp_avg =
       std::accumulate(short_term_prices.begin(), short_term_prices.end(), 0) /
-      m_short_term;
+      short_term_prices.size();
 
   m_output_file << m_cur_day << "," << std::fixed << std::setprecision(2)
                 << new_ltp_avg << "," << new_stp_avg << ","
@@ -109,22 +113,91 @@ SignalEvent MeanReversion::calculateSMA(const MarketEvent event) {
   return SignalEvent(HOLD, security);
 }
 
-// SignalEvent MeanReversion::calculateWMA() { // TODO:
-// }
+SignalEvent MeanReversion::calculateEMA(const MarketEvent event) {
+  const Security security = {event.m_symbol, event.getDayAverage()};
 
-// SignalEvent MeanReversion::calculateEMA() { // TODO:
-// }
+  static std::list<float> long_term_prices;
+  static std::list<float> short_term_prices;
+
+  if (long_term_prices.size() > m_long_term) {
+    long_term_prices.pop_front();
+  } else {
+    long_term_prices.push_back(event.getDayAverage());
+  }
+
+  if (short_term_prices.size() > m_short_term) {
+    short_term_prices.pop_front();
+  } else {
+    short_term_prices.push_back(event.getDayAverage());
+  }
+
+  if (m_cur_day < m_short_term || m_cur_day < m_long_term)
+    return SignalEvent(HOLD, security);
+
+  // see
+  // https://corporatefinanceinstitute.com/resources/career-map/sell-side/capital-markets/exponential-moving-average-ema/
+  float lta_multiplier = m_smoothing / (m_long_term + 1);
+  float sta_multiplier = m_smoothing / (m_short_term + 1);
+
+  static float long_term_previous_ema = 0;
+  static float short_term_previous_ema = 0;
+
+  if (m_cur_day % m_long_term == 0) {
+    // sma for initial avg
+    long_term_previous_ema =
+        std::accumulate(long_term_prices.begin(), long_term_prices.end(), 0) /
+        long_term_prices.size();
+  }
+
+  if (m_cur_day % m_short_term == 0) {
+    // sma for initial avg
+    short_term_previous_ema =
+        std::accumulate(short_term_prices.begin(), short_term_prices.end(), 0) /
+        short_term_prices.size();
+  }
+
+  float long_term_current_ema =
+      lta_multiplier * (event.getDayAverage() - long_term_previous_ema) +
+      long_term_previous_ema;
+
+  float short_term_current_ema =
+      sta_multiplier * (event.getDayAverage() - short_term_previous_ema) +
+      short_term_previous_ema;
+
+  m_output_file << m_cur_day << "," << std::fixed << std::setprecision(2)
+                << long_term_current_ema << "," << short_term_current_ema << ","
+                << event.getDayAverage() << std::endl;
+
+  if (long_term_previous_ema > short_term_previous_ema) {
+    // short term ema rises above long term ema
+    // send SELL signal
+    if (long_term_current_ema < short_term_current_ema) {
+      return SignalEvent(SELL, security);
+    }
+
+  } else if (long_term_previous_ema < short_term_previous_ema) {
+    // short term ema falls below long term ema
+    // send BUY signal
+    if (long_term_current_ema > short_term_current_ema) {
+      return SignalEvent(BUY, security);
+    }
+  }
+
+  long_term_previous_ema = long_term_current_ema; // update after event handling
+  short_term_previous_ema =
+      short_term_current_ema; // update after event handling
+
+  // hold by default
+  return SignalEvent(HOLD, security);
+}
 
 void MeanReversion::calculateSignal(const MarketEvent event) {
   // hold by default
 
   SignalEvent signal(HOLD, Security{event.m_symbol, event.getDayAverage()});
   switch (m_type) {
-  case WMA:
-    // signal = calculateWMA();
-    break;
   case EMA:
-    // signal = calculateEMA();
+    signal = calculateEMA(event);
     break;
   case SMA:
     signal = calculateSMA(event);
@@ -155,8 +228,11 @@ void MeanReversion::executeSignal(const SignalEvent event) {
                            });
 
     std::tuple<Security, int> tup = *it;
-    OrderEvent oe(std::get<0>(tup), std::get<1>(tup), SELL);
-    onEvent(EventVariant(oe));
+    int quantity = std::get<1>(tup);
+    if (quantity > 0) {
+      OrderEvent oe(std::get<0>(tup), quantity, SELL);
+      onEvent(EventVariant(oe));
+    }
   } break;
   case HOLD:
     // nothing to do ...

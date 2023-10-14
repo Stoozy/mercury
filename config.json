@@ -2,28 +2,34 @@
   "historical_data": "TSLA.csv",
   "strategy": {
     "name": "MEAN_REVERSION",
-    "moving_average": "SMA",
+    "moving_average": "EMA",
     "days": {
       "short_term": 10,
-      "long_term": 50
-    }
+      "long_term": 30
+    },
+    "smoothing": 2,
+    "output": "output.csv"
   },
   "capital": 10000,
   "positions": [
     {
+      "symbol": "NVDA",
+      "quantity": 0,
+      "price": 0
+    },
+    {
       "symbol": "TSLA",
       "quantity": 0,
-      "price": 115.79
+      "price": 0
     },
     {
       "symbol": "AAPL",
-      "quantity": 80,
-      "price": 260
+      "quantity": 0,
+      "price": 0
     }
   ],
-  "output": "output.csv",
   "slippage": 0.005,
   "transaction_cost": 0.001,
-  "start_date": "2018-10-11",
+  "start_date": "2022-10-12",
   "end_date": "2023-10-11"
 }

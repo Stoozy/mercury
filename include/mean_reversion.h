@@ -9,21 +9,19 @@ using json = nlohmann::json;
 class MeanReversion : public Strategy {
 private:
   // simple moving avg, weighted moving avg, exponential moving avg.
-  enum { SMA, WMA, EMA } m_type;
+  enum { SMA, EMA } m_type;
   unsigned long long m_short_term;
   unsigned long long m_long_term;
   unsigned long long m_cur_day;
   float m_slippage;
   float m_transaction_cost;
+  float m_smoothing; // used for calculating EMA
 
 public:
   MeanReversion(const json &config);
 
   SignalEvent calculateSMA(const MarketEvent);
-
-  // TODO:
-  // SignalEvent calculateWMA();
-  // SignalEvent calculateEMA();
+  SignalEvent calculateEMA(const MarketEvent);
 
   virtual void calculateSignal(const MarketEvent);
   virtual void executeSignal(const SignalEvent);

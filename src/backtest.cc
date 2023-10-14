@@ -6,8 +6,6 @@
 #include <market.h>
 #include <mean_reversion.h>
 
-vector<PNL> Backtest::getResults() { return m_results; }
-
 void Backtest::run() {
   DataHandler data_handler;
 
@@ -41,6 +39,7 @@ void Backtest::run() {
     float initial_balance = strategy->m_initial_total;
     float current_balance = strategy->getTotalBalance();
 
+    std::cout << std::endl;
     std::cout << "\tInitial value on all assets: $" << std::fixed
               << std::setprecision(2) << initial_balance << std::endl;
 
