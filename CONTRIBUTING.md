@@ -26,7 +26,7 @@ Now clone the forked repository to your machine. Go to your GitHub account, open
 
 Open a terminal and run the following git command:
 
-```
+```sh
 git clone "url you just copied"
 ```
 
@@ -34,35 +34,34 @@ where "URL you just copied" (without quotation marks) is the URL to this reposit
 
 For example:
 
-```
+```sh
 git clone https://github.com/username/mercury.git
 ```
 
 #### Create a new branch for your changes or fix 
 
-    ```sh
-     $ git checkout -b <branch-name>
-    ```
+```sh
+$ git checkout -b <branch-name>
+```
 
 #### Setup the project in your local by following the steps listed in the [README.md](https://github.com/Stoozy/mercury/blob/master/README.md) file
 
 #### Open the project in a code editor and begin working on it
 #### Add the contents of the changed files to the "snapshot" git uses to manage the state of the project, also known as the index
 
-    ```sh
-    $ git add .
-    ```
+```sh
+$ git add .
+```
 
 #### Add a descriptive commit message
 
-    ```sh
-    $ git commit -m "Insert a short message of the changes made here"
-    ```
+```sh
+$ git commit -m "Insert a short message of the changes made here"
+```
 
 #### Push the changes to the remote repository
-
-    ```sh
-    $ git push -u origin <branch-name>
-    ```
+```sh
+$ git push -u origin <branch-name>
+```
 
 #### Submit a pull request to the upstream repository
