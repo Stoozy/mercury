@@ -1,8 +1,11 @@
 #include <clue.h>
 #include <string>
 #include <util.h>
+#include <numeric>
 
 using std::string;
+
+namespace util {
 
 std::chrono::system_clock::time_point
 parse_date(const std::string &dateString) {
@@ -26,4 +29,15 @@ string char_ptr_to_string(char *str) {
     s += str[i];
 
   return s;
+}
+
+float get_fp_avg_vec(std::vector<float> v){
+      return (float) (std::accumulate(v.begin(), v.end(), 0.0f) / v.size());
+}
+
+float get_fp_avg_list(std::list<float> l){
+      return (float) (std::accumulate(l.begin(), l.end(), 0.0f) / l.size());
+}
+
+
 }

@@ -12,8 +12,8 @@ MarketSimulation::~MarketSimulation() {}
 void MarketSimulation::run() {
   LOG_INFO("[MarketSimulator] Started market simulation.");
 
-  auto start = parse_date(m_config["start_date"]);
-  auto end = parse_date(m_config["end_date"]);
+  auto start = util::parse_date(m_config["start_date"]);
+  auto end = util::parse_date(m_config["end_date"]);
 
   // Calculate the duration between the two time points
   auto duration = end - start;
@@ -36,7 +36,7 @@ void MarketSimulation::run() {
   float low;
   float volume;
   while (in.read_row(date, open, high, low, volume)) {
-    auto cur = parse_date(date);
+    auto cur = util::parse_date(date);
     if (start <= cur && cur <= end) {
       MarketEvent me(symbol, open, high, low, volume);
       EventVariant variant = me;

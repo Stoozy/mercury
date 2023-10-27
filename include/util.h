@@ -6,6 +6,8 @@
 #include <ctime>
 #include <iomanip>
 #include <iostream>
+#include <vector>
+#include <list>
 
 #define PROFILE
 
@@ -18,8 +20,13 @@
 \t-h \tdisplay this guide\n\
 \t-c \tset config file"
 
+namespace util {
 std::string char_ptr_to_string(char *str);
-
 std::chrono::system_clock::time_point parse_date(const std::string &dateString);
+
+float get_fp_avg_vec(std::vector<float> v);
+float get_fp_avg_list(std::list<float> l);
+
+}
 
 #endif

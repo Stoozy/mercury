@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
 
       LOG_INFO("Config file at " << argv[2]);
 
-      string path = char_ptr_to_string(argv[2]);
+      string path = util::char_ptr_to_string(argv[2]);
       Config conf(path);
 
       if (!conf.exists()) {

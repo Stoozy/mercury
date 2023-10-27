@@ -1,6 +1,7 @@
 #include <clue.h>
 #include <list>
 #include <mean_reversion.h>
+#include <util.h>
 
 MeanReversion::MeanReversion(const json &config)
     : Strategy(config), m_cur_day(0) {
@@ -60,13 +61,8 @@ SignalEvent MeanReversion::calculateSMA(const MarketEvent event) {
   static std::list<float> long_term_prices;
   static std::list<float> short_term_prices;
 
-  float current_ltp_avg =
-      std::accumulate(long_term_prices.begin(), long_term_prices.end(), 0) /
-      m_long_term;
-
-  float current_stp_avg =
-      std::accumulate(short_term_prices.begin(), short_term_prices.end(), 0) /
-      m_short_term;
+  float current_ltp_avg = util::get_fp_avg_list(long_term_prices);
+  float current_stp_avg = util::get_fp_avg_list(short_term_prices);
 
   if (long_term_prices.size() > m_long_term) {
     long_term_prices.pop_front();
@@ -80,13 +76,8 @@ SignalEvent MeanReversion::calculateSMA(const MarketEvent event) {
     short_term_prices.push_back(event.getDayAverage());
   }
 
-  float new_ltp_avg =
-      std::accumulate(long_term_prices.begin(), long_term_prices.end(), 0) /
-      long_term_prices.size();
-
-  float new_stp_avg =
-      std::accumulate(short_term_prices.begin(), short_term_prices.end(), 0) /
-      short_term_prices.size();
+  float new_ltp_avg = util::get_fp_avg_list(long_term_prices);
+  float new_stp_avg = util::get_fp_avg_list(short_term_prices);
 
   m_output_file << m_cur_day << "," << std::fixed << std::setprecision(2)
                 << new_ltp_avg << "," << new_stp_avg << ","
@@ -144,16 +135,12 @@ SignalEvent MeanReversion::calculateEMA(const MarketEvent event) {
 
   if (m_cur_day % m_long_term == 0) {
     // sma for initial avg
-    long_term_previous_ema =
-        std::accumulate(long_term_prices.begin(), long_term_prices.end(), 0) /
-        long_term_prices.size();
+    long_term_previous_ema = util::get_fp_avg_list(long_term_prices);
   }
 
   if (m_cur_day % m_short_term == 0) {
     // sma for initial avg
-    short_term_previous_ema =
-        std::accumulate(short_term_prices.begin(), short_term_prices.end(), 0) /
-        short_term_prices.size();
+    short_term_previous_ema = util::get_fp_avg_list(short_term_prices);
   }
 
   float long_term_current_ema =

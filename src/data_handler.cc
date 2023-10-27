@@ -5,7 +5,6 @@
 #include <unistd.h>
 
 using std::find_if;
-using std::make_unique;
 
 DataHandler::DataHandler() {}
 DataHandler::~DataHandler() {}
@@ -42,8 +41,6 @@ void DataHandler::run() {
 
       dispatch(variant);
     }
-
-    sleep(0.5);
   }
 }
 
