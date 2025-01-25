@@ -20,7 +20,7 @@ TEST_CASE("DateTime Conversion", "[util]"){
 }
 
 TEST_CASE("char*->string Conversion", "[util]"){
-    char * tmp = "Testing 123";
+    const char * tmp = "Testing 123";
 
 
     std::string str = util::char_ptr_to_string(tmp);
