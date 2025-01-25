@@ -21,7 +21,7 @@
 \t-c \tset config file"
 
 namespace util {
-std::string char_ptr_to_string(char *str);
+std::string char_ptr_to_string(const char *str);
 std::chrono::system_clock::time_point parse_date(const std::string &dateString);
 
 float get_fp_avg_vec(std::vector<float> v);

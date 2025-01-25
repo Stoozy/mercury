@@ -21,7 +21,7 @@ parse_date(const std::string &dateString) {
   return std::chrono::system_clock::from_time_t(std::mktime(&timeStruct));
 }
 
-string char_ptr_to_string(char *str) {
+string char_ptr_to_string(const char *str) {
   string s = "";
   int len = strlen(str);
 
